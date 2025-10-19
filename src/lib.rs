@@ -7,6 +7,7 @@ include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 use std::convert::TryFrom;
 
+#[derive(Debug, Clone, Copy)]
 pub enum VadMode {
     Quality = 0,
     LowBitrate = 1,
@@ -14,7 +15,7 @@ pub enum VadMode {
     VeryAggressive = 3,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum SampleRate {
     Rate8kHz = 8000,
     Rate16kHz = 16000,
