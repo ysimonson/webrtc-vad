@@ -2,8 +2,9 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
-mod bindgen;
-use bindgen::*;
+
+include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+
 use std::convert::TryFrom;
 
 pub enum VadMode {
