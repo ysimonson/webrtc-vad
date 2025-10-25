@@ -1,10 +1,7 @@
 // build.rs
 
-use std::env;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Command;
-
-extern crate cc;
 
 fn main() {
     if !Path::new("resources/libfvad/.git").exists() {
@@ -31,14 +28,4 @@ fn main() {
         .file("resources/libfvad/src/vad/vad_sp.c")
         .file("resources/libfvad/src/fvad.c")
         .compile("libfvad");
-
-    let bindings = bindgen::Builder::default()
-        .header("resources/libfvad/include/fvad.h")
-        .generate()
-        .expect("Unable to generate bindings");
-
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    bindings
-        .write_to_file(out_path.join("bindings.rs"))
-        .expect("Couldn't write bindings!");
 }

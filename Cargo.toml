@@ -16,5 +16,4 @@ repository = "https://github.com/kaegi/webrtc-vad"
 [dependencies]
 
 [build-dependencies]
-bindgen = "0.71.0"
 cc = "1.2.41"

@@ -1,9 +1,4 @@
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
-#![allow(dead_code)]
-
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+pub mod ffi;
 
 use std::convert::TryFrom;
 
@@ -37,7 +32,7 @@ impl TryFrom<i32> for SampleRate {
 }
 
 pub struct Vad {
-    fvad: *mut Fvad,
+    fvad: *mut ffi::Fvad,
 }
 
 impl Vad {
@@ -73,7 +68,7 @@ impl Vad {
     /// Panics in case of a memory allocation error.
     pub fn new_with_rate_and_mode(sample_rate: SampleRate, mode: VadMode) -> Self {
         unsafe {
-            let fvad = fvad_new();
+            let fvad = ffi::fvad_new();
             if fvad.is_null() {
                 panic!("fvad_new() did not return a valid instance (memory allocation error)");
             }
@@ -88,7 +83,7 @@ impl Vad {
     /// sample rate to defaults.
     pub fn reset(&mut self) {
         unsafe {
-            fvad_reset(self.fvad);
+            ffi::fvad_reset(self.fvad);
         }
     }
 
@@ -100,7 +95,7 @@ impl Vad {
     pub fn set_sample_rate(&mut self, sample_rate: SampleRate) {
         let sample_rate = sample_rate as i32;
         unsafe {
-            assert_eq!(fvad_set_sample_rate(self.fvad, sample_rate), 0);
+            assert_eq!(ffi::fvad_set_sample_rate(self.fvad, sample_rate), 0);
         }
     }
 
@@ -113,7 +108,7 @@ impl Vad {
     pub fn set_mode(&mut self, mode: VadMode) {
         let mode = mode as i32;
 
-        unsafe { assert_eq!(fvad_set_mode(self.fvad, mode), 0) }
+        unsafe { assert_eq!(ffi::fvad_set_mode(self.fvad, mode), 0) }
     }
 
     /// Calculates a VAD decision for an audio frame.
@@ -129,7 +124,7 @@ impl Vad {
         let b = &buffer[0] as *const i16;
 
         unsafe {
-            match fvad_process(self.fvad, b, buffer.len()) {
+            match ffi::fvad_process(self.fvad, b, buffer.len()) {
                 1 => Ok(true),
                 0 => Ok(false),
                 _ => Err(()),
@@ -141,7 +136,7 @@ impl Vad {
 impl Drop for Vad {
     fn drop(&mut self) {
         unsafe {
-            fvad_free(self.fvad);
+            ffi::fvad_free(self.fvad);
         }
     }
 }
